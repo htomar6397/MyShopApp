@@ -1,7 +1,7 @@
-import asyncHandler from "./../middleware/asyncHandler.js";
-import Order from "../models/orderModel.js";
-import Product from "../models/productModel.js";
-import { calcPrices } from "../utils/calcPrices.js";
+import asyncHandler from "../src/middleware/asyncHandler.js";
+import Order from "../src/models/orderModel.js";
+import Product from "../src/models/productModel.js";
+import { calcPrices } from "../src/utils/calcPrices.js";
 
 
 // @desc    Create new order
