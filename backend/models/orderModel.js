@@ -12,9 +12,10 @@ const orderSchema = mongoose.Schema(
         name: { type: String, required: true },
         qty: { type: Number, required: true },
         image: {
-      public_id: { type: String, required: true },
-      url: { type: String, required: true },
-    }, price: { type: Number, required: true },
+          public_id: { type: String, required: true },
+          url: { type: String, required: true },
+        },
+        price: { type: Number, required: true },
         product: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
@@ -33,7 +34,7 @@ const orderSchema = mongoose.Schema(
       required: true,
     },
     paymentResult: {
-      id: { type: String  },
+      id: { type: String },
       status: { type: String },
       update_time: { type: String },
       email_address: { type: String },
@@ -73,6 +74,22 @@ const orderSchema = mongoose.Schema(
       default: false,
     },
     deliveredAt: {
+      type: Date,
+    },
+    isShipped: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    shippedAt: {
+      type: Date,
+    },
+    isCancel: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    cancelAt: {
       type: Date,
     },
   },

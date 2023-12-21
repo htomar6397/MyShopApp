@@ -74,13 +74,21 @@ const createProduct = asyncHandler(async (req, res) => {
         //    images = fields.image;
         //  }
       //  console.log( "x",req)
-         const result = await cloudinary.v2.uploader.upload(image[0], {
+      let imageLink;
+         await cloudinary.v2.uploader.upload(image[0], {
       folder: "products",
-    })
-   const imageLink = {
-      public_id: result.public_id,
-      url: result.secure_url,
-    }
+    },function (error, result) {
+       console.log(error); 
+      if(error){ res.status(404);
+       throw new Error(error.message);}
+        imageLink = {
+     public_id: result.public_id,
+     url: result.secure_url,
+
+   }
+
+     })
+  
   // const imageLink = result.secure_url;
   const product = new Product({
     name: name[0],
@@ -108,13 +116,24 @@ const updateProduct = asyncHandler(async (req, res) => {
 console.log(req.body)
 let imageLink=image;
 if(typeof image === 'string') {
-   const result = await cloudinary.v2.uploader.upload(image, {
-     folder: "products",
-   });
-    imageLink = {
+ await cloudinary.v2.uploader.upload(
+     image,
+     {
+       folder: "products",
+     },
+     function (error, result) {
+       console.log(error); 
+      if(error){ res.status(404);
+       throw new Error(error.message);}
+        imageLink = {
      public_id: result.public_id,
      url: result.secure_url,
-   }; }
+
+   }
+
+     }
+   );
+   }
   const product = await Product.findById(req.params.id);
  if (typeof image === "string") {
    await cloudinary.v2.uploader.destroy(product.image.public_id);

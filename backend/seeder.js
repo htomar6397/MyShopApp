@@ -3,7 +3,7 @@ import User from "./models/userModel.js";
 import Product from "./models/productModel.js";
 import Order from "./models/orderModel.js";
 import connectDB from "./config/db.js";
-
+import cloudinary from 'cloudinary';
 // dotenv.config();
 
 connectDB();
@@ -76,8 +76,15 @@ const products = [
   },
 ];
 
+cloudinary.config({
+  cloud_name: "dvglgblq9",
+  api_key: "232466851794718",
+  api_secret: "1T-00pA3WRulRnlKoNtAXgCjCi8",
+});
 
+const addImage=()=>{
 
+}
 
 const importData = async () => {
   try {

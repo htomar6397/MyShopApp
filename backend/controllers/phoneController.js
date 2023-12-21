@@ -127,14 +127,14 @@ const dataaa = {
   status: " paid",
   update_time: Date.now(),
   email_address: id,
-  attempts: order.paymentResult.attempts +1
+  attempts: order.paymentResult.attempts 
 };
 order.paymentResult = dataaa;
 order.isPaid = true;
 order.paidAt = Date.now();
 await order.save();
 
-res.redirect(`http://localhost:3000/order/${order._id}`);
+res.redirect(`/order/${order._id}`);
  
       
       }
@@ -145,14 +145,14 @@ res.redirect(`http://localhost:3000/order/${order._id}`);
             status: "outOfStock",
             update_time: Date.now(),
             email_address: id,
-            attempts: order.paymentResult.attempts +1
+            attempts: order.paymentResult.attempts 
           };
           order.paymentResult = dataa;
           order.isPaid = true;
           order.paidAt = Date.now();
           await order.save();
 
-          res.redirect(`http://localhost:3000/order/${order._id}`);
+          res.redirect(`/order/${order._id}`);
  
         }
          
@@ -170,14 +170,14 @@ res.redirect(`http://localhost:3000/order/${order._id}`);
    status: "notAuthorized",
    update_time: Date.now(),
    email_address: id,
-   attempts: order.paymentResult.attempts +1
+   attempts: order.paymentResult.attempts 
  };
  order.paymentResult = data;
  order.isPaid = true;
  order.paidAt = Date.now();
  await order.save();
 
- res.redirect(`http://localhost:3000/order/${order._id}`);
+ res.redirect(`/order/${order._id}`);
  
   }}
 };

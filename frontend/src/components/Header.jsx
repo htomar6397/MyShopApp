@@ -40,11 +40,12 @@ const Header = () => {
               <img src={logo} alt='ProShop' />
               ProShop
             </Navbar.Brand>
-          </LinkContainer>
+          </LinkContainer> 
+           
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ms-auto'>
-              <SearchBox />
+            <SearchBox />
               <LinkContainer to='/cart'>
                 <Nav.Link>
                   <FaShoppingCart /> Cart

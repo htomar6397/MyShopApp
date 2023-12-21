@@ -10,15 +10,15 @@ import { logout } from './authSlice'; // Import the logout action
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
-  // credentials: "include",
-  // crossOrigin : true,
-  //  prepareHeaders: (headers) => {
+  credentials: "include",
+  crossOrigin : true,
+   prepareHeaders: (headers) => {
   
     
-  //   headers.set("Accept", "application/json");
-  //   headers.set("Access-Control-Allow-Origin", "http://localhost:5000/");
-  //   return headers;
-  // },
+    headers.set("Accept", "application/json");
+    headers.set("Access-Control-Allow-Origin", "http://localhost:5000/");
+    return headers;
+  },
   // headers: {
   //   "Content-Type": "application/json",
   //   Accept: "application/json",

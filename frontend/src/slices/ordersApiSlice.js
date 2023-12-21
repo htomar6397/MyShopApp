@@ -6,7 +6,7 @@ export const orderApiSlice = apiSlice.injectEndpoints({
     createOrder: builder.mutation({
       query: (order) => ({
         url: ORDERS_URL,
-        method: 'POST',
+        method: "POST",
         body: order,
       }),
     }),
@@ -17,9 +17,9 @@ export const orderApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5,
     }),
     payOrder: builder.mutation({
-      query: ( details ) => ({
+      query: (details) => ({
         url: `${ORDERS_URL}/pay`,
-        method: 'POST',
+        method: "POST",
         body: details,
       }),
     }),
@@ -41,10 +41,22 @@ export const orderApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 5,
     }),
+    shipOrder: builder.mutation({
+      query: (orderId) => ({
+        url: `${ORDERS_URL}/${orderId}/ship`,
+        method: "PUT",
+      }),
+    }),
     deliverOrder: builder.mutation({
       query: (orderId) => ({
         url: `${ORDERS_URL}/${orderId}/deliver`,
-        method: 'PUT',
+        method: "PUT",
+      }),
+    }),
+    cancelOrder: builder.mutation({
+      query: (orderId) => ({
+        url: `${ORDERS_URL}/${orderId}/cancel`,
+        method: "PUT",
       }),
     }),
   }),
@@ -58,4 +70,6 @@ export const {
   useGetMyOrdersQuery,
   useGetOrdersQuery,
   useDeliverOrderMutation,
+  useShipOrderMutation,
+  useCancelOrderMutation
 } = orderApiSlice;

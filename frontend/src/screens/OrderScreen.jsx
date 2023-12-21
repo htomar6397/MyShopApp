@@ -11,7 +11,9 @@ import {
   useGetOrderDetailsQuery,
   useGetRazorpayKeyQuery,
   usePayOrderMutation,
-} from '../slices/ordersApiSlice';
+  useShipOrderMutation,
+  useCancelOrderMutation,
+} from "../slices/ordersApiSlice";
 import { clearCartItems } from '../slices/cartSlice';
 import logo from "../assets/logo2.png";
 const OrderScreen = () => {
@@ -30,7 +32,8 @@ const OrderScreen = () => {
 
   const [deliverOrder, { isLoading: loadingDeliver }] =
     useDeliverOrderMutation();
-
+const [shipOrder, { isLoading: loadingShip }] = useShipOrderMutation();
+const [cancelOrder, { isLoading: loadingCancel }] = useCancelOrderMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
  
@@ -99,7 +102,7 @@ order && console.log(order.paymentMethod);
       description: "Test Payment Upi : success@razorpay",
       image: logo,
       order_id: data.id,
-      callback_url: "http://localhost:5000/api/orders/payconfirm",
+      callback_url: "/api/orders/payconfirm",
       prefill: {
         name: userInfo.name,
         email: userInfo.email,
@@ -162,6 +165,22 @@ var date = new Date(x);
    if (res.error ){ toast.error(res.error.data.message);} 
     refetch();
   };
+   const shipHandler = async () => {
+     const res = await shipOrder(orderId);
+
+     if (res.error) {
+       toast.error(res.error.data.message);
+     }
+     refetch();
+   };
+    const cancelHandler = async () => {
+      const res = await cancelOrder(orderId);
+
+      if (res.error) {
+        toast.error(res.error.data.message);
+      }
+      refetch();
+    };
 
   return isLoading ? (
     <Loader />
@@ -185,7 +204,7 @@ var date = new Date(x);
               <p>
                 <strong>Address:</strong>
                 {order.shippingAddress.address}, {order.shippingAddress.city}{" "}
-                {order.shippingAddress.postalCode},{" "}
+                {order.shippingAddress.postalCode},
                 {order.shippingAddress.country}
               </p>
               {order.isDelivered ? (
@@ -196,7 +215,167 @@ var date = new Date(x);
                 <Message variant="danger">Not Delivered</Message>
               )}
             </ListGroup.Item>
+            <ListGroup.Item>
+              <div
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  height: "100px",
+                  // width: "600px",
+                }}
+              >
+                <div
+                  style={{
+                    color: "#000",
+                    fontWeight: "400",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "3px",
+                    fontWeight: "500",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "40px",
+                      width: "40px",
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      borderRadius: "50%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    1
+                  </div>
+                  PLACED
+                </div>
 
+                {order.isCancel ? (
+                  <>
+                    <div
+                      style={{
+                        flexGrow: "1",
+                        backgroundColor: "#000",
+                        height: "2px",
+                        position: "relative",
+                        top: "-14px",
+                        scale: "1.07",
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        color: "#000",
+                        fontWeight: "400",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "3px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "40px",
+                          width: "40px",
+                          backgroundColor: "#000",
+                          color: "#fff",
+                          borderRadius: "50%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        2
+                      </div>
+                      CANCELED
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      style={{
+                        flexGrow: "1",
+                        backgroundColor: order.isShipped ? "#000" : "#0008",
+                        height: "2px",
+                        position: "relative",
+                        top: "-14px",
+                        scale: "1.07",
+                      }}
+                    ></div>
+
+                    <div
+                      style={{
+                        color: order.isShipped ? "#000" : "#0008",
+                        fontWeight: "400",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "3px",
+                        fontWeight: order.isShipped ? "500" : "400",
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "40px",
+                          width: "40px",
+                          backgroundColor: order.isShipped ? "#000" : "#0008",
+                          color: "#fff",
+                          borderRadius: "50%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        2
+                      </div>
+                      SHIPPED
+                    </div>
+                    <div
+                      style={{
+                        flexGrow: "1",
+                        backgroundColor: order.isDelivered ? "#000" : "#0008",
+                        height: "2px",
+                        position: "relative",
+                        top: "-14px",
+                        left: "5px",
+                        scale: "1.1",
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        color: order.isDelivered ? "#000" : "#0008",
+                        fontWeight: "400",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "3px",
+                        fontWeight: order.isDelivered ? "500" : "400",
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "40px",
+                          width: "40px",
+                          backgroundColor: order.isDelivered ? "#000" : "#0008",
+                          color: "#fff",
+                          borderRadius: "50%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        3
+                      </div>
+                      DELIVERED
+                    </div>
+                  </>
+                )}
+              </div>
+            </ListGroup.Item>
             <ListGroup.Item>
               <h2>Payment Method</h2>
               <p>
@@ -205,10 +384,10 @@ var date = new Date(x);
               </p>
               {order.isPaid ? (
                 <Message variant="success">
-                  {order.paymentResult.status === " paid"
+                  {order.paymentResult.status === " paid" && !order.isCancel
                     ? "Paid on"
-                    : "Refund on"}{" "}
-                  {formatAMPM(order.paidAt)}
+                    : "Refund on"}
+                  {order.isCancel? formatAMPM(order.cancelAt):formatAMPM(order.paidAt)}
                 </Message>
               ) : (
                 <Message variant="danger">Not Paid</Message>
@@ -282,17 +461,38 @@ var date = new Date(x);
                 <ListGroup.Item>
                   <div>
                     <div>
-                      <Button on onClick={()=>{setClick(true); placeOrderHandler()}}>
+                      <Button
+                        on
+                        onClick={() => {
+                          setClick(true);
+                          placeOrderHandler();
+                        }}
+                      >
                         {loadingPay ? <Loader /> : "Pay Now"}
                       </Button>
                     </div>
                   </div>
                 </ListGroup.Item>
               )}
-
               {userInfo &&
                 userInfo.isAdmin &&
                 order.isPaid &&
+                !order.isCancel &&
+                !order.isShipped && (
+                  <ListGroup.Item>
+                    <Button
+                      type="button"
+                      className="btn btn-block"
+                      onClick={shipHandler}
+                    >
+                      {loadingShip ? <Loader /> : "Mark As Shipped"}
+                    </Button>
+                  </ListGroup.Item>
+                )}
+              {userInfo &&
+                userInfo.isAdmin &&
+                order.isPaid &&
+                order.isShipped &&
                 !order.isDelivered && (
                   <ListGroup.Item>
                     <Button
@@ -301,6 +501,23 @@ var date = new Date(x);
                       onClick={deliverHandler}
                     >
                       {loadingDeliver ? <Loader /> : "Mark As Delivered"}
+                    </Button>
+                  </ListGroup.Item>
+                )}
+              {userInfo &&
+              order.paymentResult.status === ' paid' &&
+              !order.isDelivered &&
+               !order.isCancel && 
+                order.isPaid &&
+               
+               (
+                  <ListGroup.Item>
+                    <Button
+                      type="button"
+                      className="btn btn-block"
+                      onClick={cancelHandler}
+                    >
+                      {loadingCancel ? <Loader /> : "Cancel Order"}
                     </Button>
                   </ListGroup.Item>
                 )}

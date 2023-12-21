@@ -140,7 +140,29 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
     throw new Error("Order not found");
   }
 });
+// @desc    Update order to shippped
+// @route   GET /api/orders/:id/ship
+// @access  Private/Admin
+const updateOrderToShip = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+ 
+  if (order) {
+  if(order.paymentResult.status === ' paid') {
+    order.isShipped = true;
+    order.shippedAt = Date.now();
+    
+    const updatedOrder = await order.save();
 
+    res.json(updatedOrder);}
+    else {
+      res.status(400);
+      throw new Error("User gets Refund");
+    }
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+});
 // @desc    Update order to delivered
 // @route   GET /api/orders/:id/deliver
 // @access  Private/Admin
@@ -164,7 +186,29 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
     throw new Error("Order not found");
   }
 });
+// @desc    Update order to cancel
+// @route   GET /api/orders/:id/cancel
+// @access  Private/Admin
+const updateOrderToCancel = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+ 
+  if (order) {
+  if(!order.isShipped) {
+    order.isCancel = true;
+    order.cancelAt = Date.now();
+    
+    const updatedOrder = await order.save();
 
+    res.json(updatedOrder);}
+    else {
+      res.status(400);
+      throw new Error("not Cancel after Shipped");
+    }
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+});
 // @desc    Get all orders
 // @route   GET /api/orders
 // @access  Private/Admin
@@ -179,5 +223,7 @@ export {
   getOrderById,
   updateOrderToPaid,
   updateOrderToDelivered,
+  updateOrderToShip,
+  updateOrderToCancel,
   getOrders,
 };

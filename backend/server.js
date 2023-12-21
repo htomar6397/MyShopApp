@@ -3,36 +3,29 @@ import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 
-import cors from "cors";
+
 import connectDB from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
-import { config } from "dotenv";
-import cloudinary from "cloudinary";
-const port = 5000;
-config({ path: "./src/config/config.env" });
+import  {config} from 'dotenv'
+import cloudinary  from "cloudinary";
+
+
+const port = process.env.PORT || 5000;
+// config();
 connectDB();
 
 const app = express();
 
-// app.use(
-//   cors({
-//     origin: [
-//       "http://localhost:3001",
-//       "http://localhost:3000",
-    
-//     ],
-//     credentials: true,
-//   })
-// );
 
 app.use(express.json({ limit: "10mb" }));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -43,9 +36,13 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 
 
-app.get("/api/config/razorpay", (req, res) =>
-  res.send({ key: process.env.RAZORPAY_API_KEY })
-);
+
+
+
+
+// app.get("/api/config/razorpay", (req, res) =>
+//   res.send({ key: process.env.RAZORPAY_API_KEY })
+// );
 
 // if (process.env.NODE_ENV === "production") {
   const __dirname = path.resolve();
@@ -60,6 +57,7 @@ app.get("/api/config/razorpay", (req, res) =>
   // app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
   
 // }
+
  app.get("/", (req, res) => {
    res.send("API is running....");
  });
