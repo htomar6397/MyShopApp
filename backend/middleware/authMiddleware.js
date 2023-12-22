@@ -38,6 +38,7 @@ const admin = (req, res, next) => {
     throw new Error("Not authorized as an admin");
   }
 };
+// check ObjectId is valid or not through mongoose
 function checkObjectId(req, res, next) {
   if (!isValidObjectId(req.params.id)) {
     res.status(404);

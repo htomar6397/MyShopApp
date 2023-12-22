@@ -1,7 +1,7 @@
 import { useEffect,useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap';
-
+import { formatAMPM } from '../utils/formatAMPM';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import Message from '../components/Message';
@@ -9,7 +9,7 @@ import Loader from '../components/Loader';
 import {
   useDeliverOrderMutation,
   useGetOrderDetailsQuery,
-  useGetRazorpayKeyQuery,
+ 
   usePayOrderMutation,
   useShipOrderMutation,
   useCancelOrderMutation,
@@ -17,7 +17,7 @@ import {
 import { clearCartItems } from '../slices/cartSlice';
 import logo from "../assets/logo2.png";
 const OrderScreen = () => {
-   const cart = useSelector((state) => state.cart);
+  
    const dispatch = useDispatch();
   const { id: orderId } = useParams();
 
@@ -29,11 +29,9 @@ const OrderScreen = () => {
   } = useGetOrderDetailsQuery(orderId);
 
   const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
-
-  const [deliverOrder, { isLoading: loadingDeliver }] =
-    useDeliverOrderMutation();
-const [shipOrder, { isLoading: loadingShip }] = useShipOrderMutation();
-const [cancelOrder, { isLoading: loadingCancel }] = useCancelOrderMutation();
+  const [deliverOrder, { isLoading: loadingDeliver }] = useDeliverOrderMutation();
+  const [shipOrder, { isLoading: loadingShip }] = useShipOrderMutation();
+  const [cancelOrder, { isLoading: loadingCancel }] = useCancelOrderMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
  
@@ -42,8 +40,7 @@ const [cancelOrder, { isLoading: loadingCancel }] = useCancelOrderMutation();
 
     const [key , setKey]  = useState('')
 const [data, setData] = useState({});
-const [prices, setPrices] = useState({});
-const [dborders, setDborders] = useState([]);
+
  const [click, setClick] = useState(false);
 
   
@@ -53,17 +50,13 @@ const [dborders, setDborders] = useState([]);
   
     
        await payOrder({
-         orderItems: order.orderItems,
-         shippingAddress: order.shippingAddress,
-         paymentMethod: order.paymentMethod,
          orderId
        }).then((x) => {
          console.log("x",x);
        if ( x.error &&  !x.error.data.success ) {
          toast.error(x.error.data.message);
        } else {
-         setDborders(x.data.dbOrderItems);
-         setPrices(x.data.prices);
+        
          setData(x.data.order);
          setKey(x.data.key);
            dispatch(clearCartItems());
@@ -73,8 +66,9 @@ const [dborders, setDborders] = useState([]);
         console.log("error", err)
         toast.error(err.message); });
       }
+
 useEffect(()=>{
-  console.log("order",order)
+
 order && console.log(order.paymentMethod);
    if (
      order &&
@@ -87,13 +81,6 @@ order && console.log(order.paymentMethod);
 
   useEffect(() => {
 
- 
-
- 
-
-
-
-  
     const options = {
       key,
       amount: data.amount,
@@ -102,7 +89,7 @@ order && console.log(order.paymentMethod);
       description: "Test Payment Upi : success@razorpay",
       image: logo,
       order_id: data.id,
-      callback_url: "/api/orders/payconfirm",
+      callback_url: process.env.NODE_ENV === 'production' ? "/api/orders/payconfirm" : "http://localhost:5000/api/orders/payconfirm",
       prefill: {
         name: userInfo.name,
         email: userInfo.email,
@@ -114,49 +101,24 @@ order && console.log(order.paymentMethod);
         color: "#3c4c5d",
       },
     };
-    console.log(options);
+   
 
    if(key && (order.paymentResult.attempts == 0 || click)){
     setClick(false);
      const razor = new window.Razorpay(options);
-      const x=  razor.open();
+      razor.open();
      
      
  
    }
    
  
-  console.log("key", key, dborders);
+
 
   }, [key,data,isLoading]);
 
 
-function formatAMPM(x) {
-var date = new Date(x);
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  var ampm = hours >= 12 ? "pm" : "am";
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  minutes = minutes < 10 ? "0" + minutes : minutes;
-  var strTime = "....... " +
-    date.toString().split(" ")[0] +
-    " ........ " +
-    date.toString().split(" ")[1] +
-    " " +
-    date.toString().split(" ")[2] +
-    " " +
-    date.toString().split(" ")[3] +
-    " ........ " +
-    hours +
-    ":" +
-    minutes +
-    " " +
-    ampm 
-    
-    ;
-  return strTime;
-}
+
 
 
   const deliverHandler = async () => {
@@ -198,7 +160,7 @@ var date = new Date(x);
                 <strong>Name: </strong> {order.user.name}
               </p>
               <p>
-                <strong>Email: </strong>{" "}
+                <strong>Email: </strong>
                 <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
               </p>
               <p>

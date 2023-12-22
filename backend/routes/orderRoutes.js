@@ -4,7 +4,7 @@ import {
   addOrderItems,
   getMyOrders,
   getOrderById,
-  updateOrderToPaid,
+ 
   updateOrderToDelivered,
   updateOrderToShip,
   updateOrderToCancel,
@@ -16,7 +16,6 @@ import { checkStatus, newPayment } from "./../controllers/phoneController.js";
 router.route("/").post(protect, addOrderItems).get(protect, admin, getOrders);
 router.route("/myorders").get(protect, getMyOrders);
 router.route("/:id").get(protect, getOrderById);
-// router.route("/:id/pay").put(protect, updateOrderToPaid);
 router.route("/pay").post(protect, newPayment);
 router.route("/:id/deliver").put(protect, admin, updateOrderToDelivered);
 router.route("/:id/ship").put(protect, admin, updateOrderToShip);

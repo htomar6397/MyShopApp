@@ -56,24 +56,8 @@ const createProduct = asyncHandler(async (req, res) => {
       const  fields = await form.parse(req);
      const { name, price, description, image, brand, category, countInStock} =
        fields[0];
-    console.log(
-      name,
-      price,
-      description,
-      image,
-      brand,
-      category,
-      countInStock,
-     
-    );
-        //  let images = [];
-
-        //  if (typeof fields.image === "string") {
-        //    images.push(fields.image);
-        //  } else {
-        //    images = fields.image;
-        //  }
-      //  console.log( "x",req)
+  
+        
       let imageLink;
          await cloudinary.v2.uploader.upload(image[0], {
       folder: "products",
@@ -89,7 +73,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
      })
   
-  // const imageLink = result.secure_url;
+
   const product = new Product({
     name: name[0],
     price: price[0],
@@ -103,7 +87,7 @@ const createProduct = asyncHandler(async (req, res) => {
   });
 
   const createdProduct = await product.save();
-  // const createdProduct = await Product.create(req.body);
+  
   res.status(201).json(createdProduct);
 });
 
@@ -113,7 +97,7 @@ const createProduct = asyncHandler(async (req, res) => {
 const updateProduct = asyncHandler(async (req, res) => {
   const { name, price, description, image, brand, category, countInStock } =
     req.body;
-console.log(req.body)
+
 let imageLink=image;
 if(typeof image === 'string') {
  await cloudinary.v2.uploader.upload(
@@ -122,7 +106,7 @@ if(typeof image === 'string') {
        folder: "products",
      },
      function (error, result) {
-       console.log(error); 
+      
       if(error){ res.status(404);
        throw new Error(error.message);}
         imageLink = {
@@ -186,7 +170,7 @@ const createProductReview = asyncHandler(async (req, res) => {
      
     if (alreadyReviewed) {
     const index = product.reviews.indexOf(alreadyReviewed);
-    console.log(index);
+    
     product.reviews[index].rating = Number(rating);
     product.reviews[index].comment = comment;
     product.numReviews = product.reviews.length;
