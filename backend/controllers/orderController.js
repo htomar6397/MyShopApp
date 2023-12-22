@@ -108,25 +108,56 @@ const updateOrderToShip = asyncHandler(async (req, res) => {
   if (order) {
 
   if(order.paymentResult.status === ' paid') {
+       
+      const outofstock = await Promise.all(order.orderItems.map(async (element) => {
+       const updatedStock = await Product.findById(element._id);
+       console.log(updatedStock.countInStock - element.qty);
+       if (updatedStock.countInStock - element.qty < 0) {
+         console.log("in");
 
-    await order.orderItems.forEach(async (element) => {
+         const ms =
+           element.qty > 1
+             ? element.qty + " stocks of " + updatedStock.name.split(" ")[0]
+             : element.qty + " stock of " + updatedStock.name.split(" ")[0];
+
+         console.log(ms);
+         return ms;
+       }
+     }));
+      let err = '';
+      outofstock.forEach((x)=>{
+        if(err!=='') err = err + ',';
+        err=err + x 
+      })
+      console.log(err)
+
+      if(outofstock.length>0) { 
+         res.status(400);
+      throw new Error(
+        outofstock.length === 1
+          ? err + " is not available"
+          : err + " are not available"
+      );
+     }
+        
+
+
+     order.orderItems.forEach(async (element) => {
       const updatedStock = await Product.findById(element._id);
      
-      if (updatedStock.countInStock - element.qty >= 0) {
+     
         updatedStock.countInStock = updatedStock.countInStock - element.qty;
         await updatedStock.save();
        
-      } else {
-        res.status(400);
-        throw new Error(`${updatedStock.name} Gone Out Of Stock `);
-      }
+     
+         });
        order.isShipped = true;
        order.shippedAt = Date.now();
 
        const updatedOrder = await order.save();
 
        res.json(updatedOrder);
-    });
+    
 
     }
     else {
@@ -177,7 +208,7 @@ const updateOrderToCancel = asyncHandler(async (req, res) => {
     res.json(updatedOrder);}
     else {
       res.status(400);
-      throw new Error("not Cancel after Shipped");
+      throw new Error("Shipped order can't cancel");
     }
   } else {
     res.status(404);

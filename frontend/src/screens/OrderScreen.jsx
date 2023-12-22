@@ -468,9 +468,9 @@ order && console.log(order.paymentMethod);
                 )}
               {userInfo &&
               order.paymentResult.status === ' paid' &&
-              !order.isDelivered &&
+              !order.isShipped &&
                !order.isCancel && 
-                order.isPaid &&
+                order.isPaid && 
                
                (
                   <ListGroup.Item>
