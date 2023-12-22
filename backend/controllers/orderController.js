@@ -106,13 +106,29 @@ const updateOrderToShip = asyncHandler(async (req, res) => {
   const order = await Order.findById(req.params.id);
  
   if (order) {
-  if(order.paymentResult.status === ' paid') {
-    order.isShipped = true;
-    order.shippedAt = Date.now();
-    
-    const updatedOrder = await order.save();
 
-    res.json(updatedOrder);}
+  if(order.paymentResult.status === ' paid') {
+
+    await order.orderItems.forEach(async (element) => {
+      const updatedStock = await Product.findById(element._id);
+     
+      if (updatedStock.countInStock - element.qty >= 0) {
+        updatedStock.countInStock = updatedStock.countInStock - element.qty;
+        await updatedStock.save();
+       
+      } else {
+        res.status(400);
+        throw new Error(`${updatedStock.name} Gone Out Of Stock `);
+      }
+       order.isShipped = true;
+       order.shippedAt = Date.now();
+
+       const updatedOrder = await order.save();
+
+       res.json(updatedOrder);
+    });
+
+    }
     else {
       res.status(400);
       throw new Error("User gets Refund");
@@ -147,7 +163,7 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
 });
 // @desc    Update order to cancel
 // @route   GET /api/orders/:id/cancel
-// @access  Private/Admin
+// @access  Private
 const updateOrderToCancel = asyncHandler(async (req, res) => {
   const order = await Order.findById(req.params.id);
  

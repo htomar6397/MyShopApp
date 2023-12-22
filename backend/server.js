@@ -15,7 +15,7 @@ import cloudinary  from "cloudinary";
 
 const app = express();
 
-// config();
+config();
 if(process.env.ENVIROMENT === 'development') {
 
 
