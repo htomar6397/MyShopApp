@@ -111,25 +111,27 @@ const updateOrderToShip = asyncHandler(async (req, res) => {
        
       const outofstock = await Promise.all(order.orderItems.map(async (element) => {
        const updatedStock = await Product.findById(element._id);
-       console.log(updatedStock.countInStock - element.qty);
+     
        if (updatedStock.countInStock - element.qty < 0) {
-         console.log("in");
+      
 
          const ms =
            element.qty > 1
              ? element.qty + " stocks of " + updatedStock.name.split(" ")[0]
              : element.qty + " stock of " + updatedStock.name.split(" ")[0];
 
-         console.log(ms);
+        
          return ms;
        }
+       return null;
      }));
+     const outItems = outofstock.filter((stock) => stock!==null)
       let err = '';
-      outofstock.forEach((x)=>{
+      outItems.forEach((x)=>{
         if(err!=='') err = err + ',';
         err=err + x 
       })
-      console.log(err)
+     
 
       if(outofstock.length>0) { 
          res.status(400);

@@ -5,7 +5,7 @@ import mongoose from "mongoose";
      const conn = await mongoose.connect(
        process.env.ENVIROMENT === "production"
          ? process.env.MONGO_URI
-         : "mongodb://127.0.0.1:27017/ECOM"
+         : "mongodb://127.0.0.1:27017/ecom"
      );
      console.log(`MongoDB Connected: ${conn.connection.host}`);
    } catch (error) {
